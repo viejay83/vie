@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "language": "Dutch",
+  "effortLevel": "high",
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)",
+      "Read(./**/credentials.json)",
+      "Bash(git commit *--no-verify*)",
+      "Bash(docker compose down*)",
+      "Bash(docker volume rm*)",
+      "Bash(docker system prune*)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf .)",
+      "Bash(find / *)",
+      "Bash(grep -R * /)"
+    ],
+    "ask": [
+      "Bash(docker restart *)",
+      "Bash(docker compose restart *)",
+      "Bash(docker compose up -d *)",
+      "Bash(git push *)",
+      "Bash(npm install *)",
+      "Bash(pip install *)"
+    ],
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(cat *)",
+      "Bash(sed -n *)",
+      "Bash(rg *)",
+      "Bash(find . -maxdepth *)",
+      "Bash(docker ps *)",
+      "Bash(docker logs *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-dangerous-commands.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before stopping, verify whether the user's requested task is actually complete. If not complete, respond with JSON {\"ok\": false, \"reason\": \"what remains\"}. If complete, respond {\"ok\": true}."
+          }
+        ]
+      }
+    ]
+  }
+}
