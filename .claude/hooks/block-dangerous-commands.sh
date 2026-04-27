@@ -31,13 +31,13 @@ case "$COMMAND" in
   *"rm -rf /"*|*"rm -rf ~"*|*"rm -rf ."*)
     block "Dangerous deletion command."
     ;;
-  *"cat .env"*|*"cat .env."*)
+  *"cat .env"*|*"cat .env."*|*"cat ./.env"*)
     block "Reading .env secrets is not allowed."
     ;;
-  *"cat "*"/credentials.json"*)
+  *"cat "*"credentials.json"*)
     block "Reading credentials is not allowed."
     ;;
-  *"find / "*)
+  *"find /"*)
     block "Broad root filesystem scan blocked. Use targeted path with -maxdepth."
     ;;
   *"grep -R "*" /"*)
