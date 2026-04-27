@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Fail open if jq is not installed — never block all Bash calls due to missing tool
 if ! command -v jq >/dev/null 2>&1; then
   echo "NorthSea hook warning: jq not found, hook skipped." >&2
   exit 0
@@ -9,11 +8,13 @@ fi
 
 INPUT="$(cat)"
 
-# Fail open if JSON parsing fails
-COMMAND="$(echo "$INPUT" | jq -r '.tool_input.command // ""' 2>/dev/null)" || {
-  echo "NorthSea hook warning: jq parse failed, hook skipped." >&2
+COMMAND="$(
+  echo "$INPUT" | jq -r '.tool_input.command // ""' 2>/dev/null || true
+)"
+
+if [ -z "$COMMAND" ]; then
   exit 0
-}
+fi
 
 block() {
   echo "Blocked by NorthSea policy: $1" >&2
